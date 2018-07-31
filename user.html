@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Mensajes</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css" integrity="sha384-Smlep5jCw/wG7hdkwQ/Z5nLIefveQRIY9nfy6xoR1uRYBtpZgI6339F5dgvm/e9B"
+        crossorigin="anonymous">
+    <link rel="stylesheet" href="css/main.css">
+</head>
+
+<body>
+    <div class="content">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-danger">
+            <a class="navbar-brand" href="#">MindWave</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown"
+                aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse flex-row-reverse" id="navbarNavDropdown">
+                <ul class="navbar-nav">
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true"
+                            aria-expanded="false">
+                            User
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            <a class="dropdown-item" href="#">Log out</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <div class="container text-center mt-4">
+            <img src="img/avatar.jpg" width="80px" height="80px" class="rounded-circle mb-2" alt="">
+            <h6>Pedro Perez</h6>
+        </div>
+        <div class="container mt-3">
+            <div id="con" class=" pb-5 mb-3"></div>
+
+        </div>
+
+    </div>
+    </div>
+    <div class="footer py-2 px-2 d-flex" id="chat">
+            <input type="text" class="form-control mr-2" id="chat-message">
+            <button class="button-ok" onclick="sendmessage()">Send</button>
+
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+
+    <script src="/socket.io/socket.io.js" charset="utf-8"></script>
+    <script type="text/javascript">
+   
+   var messages = [];
+
+        const socket = io();
+
+        let counter = 0;
+        socket.on('arduino:message', function (message) {
+            // console.log(dataSerial);
+            console.log(message.value.toString());
+            
+            messages[counter] = message.value.toString();
+            counter++;
+
+            var text="";
+            var date=new Date();
+            var hora=date.getHours();
+            var minutos=date.getMinutes('mm');
+            for (var i = 0; i<messages.length; i++) {
+                if(i>0)
+                if(messages[i] != messages[i-1])
+                var dt=new Date() ;
+                    text += '<div><div class="message mt-3">' + messages[i] + '<br><div class="date"> ' + hora.toString()+":"+ minutos.toString() + '</div></div></div>';
+            }
+
+            $("#con").html(text)
+        });
+
+        function sendmessage(){
+            var a = $("#chat-message").val();
+            socket.emit('arduino:chat', a);
+
+
+            messages[counter] = a;
+            counter++;
+
+            var text="";
+            var date=new Date();
+            var hora=date.getHours();
+            var minutos=date.getMinutes('mm');
+            for (var i = 0; i<messages.length; i++) {
+                if(i>0)
+                if(messages[i] != messages[i-1])
+                var dt=new Date() ;
+                    text += '<div class="d-flex flex-row-reverse"><div class="message mt-3">' + messages[i] + '<br><div class="date"> ' + hora.toString()+":"+ minutos.toString() + '</div></div></div>';
+            }
+
+            $("#con").html(text)
+
+
+            $("#chat-message").val("");
+        }
+    </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js" integrity="sha384-o+RDsa0aLu++PJvFqy8fFScvbHFLtbvScb8AjopnFD+iEQ7wo/CG0xlczd+2O/em"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
